@@ -87,13 +87,11 @@ function CosmeticLib:_CreateTables()
 	-- Load in values
 	local kvLoadedTable = LoadKeyValues( "scripts/items/items_game.txt" )
 	CosmeticLib._AllItemsByID = kvLoadedTable[ "items" ]
-	CosmeticLib._AllItemsByID[ "-1" ] = {}
-	CosmeticLib._AllItemsByID[ "-1" ][ "model_player" ] = "models/development/invisiblebox.vmdl"
 	CosmeticLib._NameToID = CosmeticLib._NameToID or {}										-- Structure table[ "item_name" ] = item_id
 	
 	-- Create these tables for faster lookup time
 	for CosmeticID, CosmeticTable in pairs( CosmeticLib._AllItemsByID ) do					-- Extract only from items block
-		if CosmeticTable[ "prefab" ]	then	
+		if CosmeticTable[ "prefab" ] then	
 			if CosmeticTable[ "prefab" ] == "default_item" and CosmeticTable[ "used_by_heroes" ]
 					and type( CosmeticTable[ "used_by_heroes" ] ) == "table" then			-- Insert default items
 				CosmeticLib:_InsertIntoDefaultTable( CosmeticID )
@@ -121,6 +119,8 @@ function CosmeticLib:_CreateTables()
 		end
 	end
 	
+	CosmeticLib._AllItemsByID[ "-1" ] = {}
+	CosmeticLib._AllItemsByID[ "-1" ][ "model_player" ] = "models/development/invisiblebox.vmdl"
 end
 
 --[[
