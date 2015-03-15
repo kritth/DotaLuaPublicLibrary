@@ -1,0 +1,152 @@
+=====================================Main Functions================================================
+CosmeticLib:ReplaceWithSlotName( unit, slot_name, new_item_id )
+- Replace item for unit to the slot_name specified 
+- Example: 	CosmeticLib:ReplaceWithSlotName( drow_ranger, "weapon", 6076 )
+-
+- @param unit			: Entity that will replace cosmetic
+- @param slot_name		: Slot name
+- @param new_item_id	: Item ID that will replace the old one
+
+CosmeticLib:ReplaceWithItemID( unit, old_item_id, new_item_id )
+- Replace old_item_id cosmetic with new_item_id cosmetic for unit
+- Example: 	CosmeticLib:ReplaceWithItemID( drow_ranger, 79, 5979 )
+- 
+- @param unit			: Entity that will replace cosmetic
+- @param old_item_id	: Item ID of the cosmetic currently equipped and will be replaced
+- @param new_item_id	: Item ID of the cosmetic that will replace the currently equipped one
+
+CosmeticLib:ReplaceDefault( unit, hero_name )
+- Replace the whole sets back to default cosmetic
+- Example: 	CosmeticLib:ReplaceDefault( drow_ranger, "npc_dota_hero_drow_ranger" )
+- 
+- @param unit			: Entity that will replace cosmetic
+- @param hero_name		: Name of the hero retrievable by hero:GetName()
+
+CosmeticLib:EquipHeroSet( hero, set_id )
+- Equip the whole set of cosmetics to hero based on set_id, note that this will replace in respect to hero:GetName()
+- Example: 	CosmeticLib:EquipHeroSet( drow_ranger, 20561 )
+-
+- @param hero			: Hero entity that will replace the cosmetics
+- @param set_id			: Item ID of set items that will replace the current ones in the entity
+
+CosmeticLib:EquipSet( unit, hero_name, set_id )
+- Equip the whole set of cosmetics to unit based on hero_name and set_id
+- Example: 	CosmeticLib:EquipSet( drow_creature, "npc_dota_hero_drow_ranger", 20561 )
+- 
+- @param unit			: Entity that will replace cosmetics
+- @param hero_name		: Hero's name that the set_id belongs to
+- @param set_id			: Item ID of set items that will replace the current ones in the entity
+
+===================================Getter Functions================================================
+CosmeticLib:GetAvailableSlotForHero( hero_name )
+- Get available slots for hero based on hero_name
+- Example: 	CosmeticLib:GetAvailableSlotForHero( "npc_dota_hero_drow_ranger" )
+-
+- @param hero_name		: Name of hero retrievable from unit:GetName()
+- @return				: Table containing slot_name
+
+CosmeticLib:GetAllAvailableForHeroInSlot( hero_name, slot_name )
+- Get all availables cosmetics in the slot_name for hero based on hero_name
+- Example: 	CosmeticLib:GetAvailableForHeroInSlot( "npc_dota_hero_drow_ranger", "weapon" )
+-
+- @param hero_name		: Name of hero retreivable from unit:GetName()
+- @param slot_name		: Name of the slot in the hero
+- @return				: Table containing item_name within the slot
+
+CosmeticLib:GetAllAvailableWearablesName()
+- Get all cosmetics name available
+- 
+- @return				: Table containing item_name from every heroes and every slots
+
+CosmeticLib:GetAllAvailableWearablesID()
+- Get all cosmetics id available
+- 
+- @return				: Table containing item_id from every heroes and every slots
+
+CosmeticLib:GetSetByName( set_name )
+- Get set item by using set_name
+- Example:	CosmeticLib:GetSetByName( "Jewel of the Forest Set" )
+-
+- @param set_name		: Name of the set item
+- @return				: Table containing all set items
+
+CosmeticLib:GetAllSetsForHero( hero_name )
+- Get all sets available for hero_name
+- Example:	CosmeticLib:GetAllSetsForHero( "npc_dota_hero_drow_ranger" )
+-
+- @param hero_name		: Name of hero retreivable from unit:GetName() i.e. npc_dota_hero_drow_ranger
+- @return				: Table containing set_name as key and set_id as value
+
+CosmeticLib:GetIDByName( item_name )
+- Get item_id by using item_name
+- Example:	CosmeticLib:GetIDByName( "Sentinel Quiver" )
+-
+- @param item_name		: Name of the item
+- @return				: ID associated with item_name
+
+CosmeticLib:GetIDByModelName( model_name )
+- Get item_id by using model_name
+- Example:	CosmeticLib:GetIdByModelName( "models/heroes/drow/drow_weapon.vmdl" )
+- 
+- @param model_name		: Relative path of the model
+- @return				: ID associated with model_name()
+
+====================================Console Commands===============================================
+*** These console commands works only on server console
+print_available_players
+- Print all available player_id to console
+- @print			: Player player_id
+
+print_item_sets_for_player player_id
+- Print available set_id for player with id player_id to console
+- @param player_id	: Player ID between 0 to 9
+- @print			: Set ID: set_id		Name: set_name
+
+print_items_from_player player_id
+- Print all item slots and its associated item id from player_id to console
+- @param player_id	: Player ID between 0 to 9
+- @print			: Item ID: item_id		Slot: slot_name
+
+print_items_for_slot_from_player player_id slot_name
+- Print all items according to slot_name associated with assigned hero from player_id to console
+- @param player_id	: Player ID between 0 to 9
+- @param slot_name	: Slot name, retrievable via print_items_from_player
+- @print			: Item ID: item_id		Item name: item_name
+
+equip_item_set_for_player player_id set_id
+- Equip set_id set items to assigned hero for player_id
+- @param player_id	: Player ID between 0 to 9
+- @param set_id		: Item ID for set/bundle item
+
+replace_item_by_slot player_id slot_name item_id
+- Replace item in slot_name by item_id for assigned hero from player_id
+- @param player_id	: Player ID between 0 to 9
+- @param slot_name	: Slot name, retrievable via print_items_from_player
+- @param item_id	: Item id from items_game.txt or retrievable via print_items_for_slot_from_player
+
+replace_item_by_id player_id old_item_id new_item_id
+- Replace item that match old_item_id with new_item_id for assigned hero from player_id
+- @param player_id		: Player ID between 0 to 9
+- @param old_item_id	: Item id for the old item that is current equipped to hero
+- @param new_item_id	: Item id for the new item to replace
+
+====================================Print to Console===============================================
+CosmeticLib:PrintPlayers()
+- Display all eligible players to console
+- @print			: Player player_id
+
+CosmeticLib:PrintSetsIDForHero( player )
+- Display all sets that can be equipped by assigned hero for given player entity
+- @param player		: Player entity retrievable by PlayerResource:GetPlayer( player_id )
+- @print			: Set ID: set_id		Name: set_name
+
+CosmeticLib:PrintItemsFromPlayer( player )
+- Display all item slots and item ids associate with assigned hero for given player entity to console
+- @param player		: Player entity retrievable by PlayerResource:GetPlayer( player_id )
+- @print			: Item ID: item_id		Slot: slot_name
+
+CosmeticLib:PrintItemsForSlotFromPlayer( player, slot_name )
+- Display all items for the given slot associated with assigned hero for given player entity to console
+- @param player		: Player entity retrievable by PlayerResource:GetPlayer( player_id )
+- @param slot_name	: Slot name
+- @print			: Item ID: item_id		Item name: item_name
