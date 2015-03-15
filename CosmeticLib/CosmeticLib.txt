@@ -1,3 +1,11 @@
+================================In precache function===============================================
+***Required
+PrecacheResource( "model", "models/development/invisiblebox.vmdl", context )
+
+* Depend on cosmetics you need, for example, drow will need
+PrecacheResource( "model_folder", "models/heroes/drow", context )
+PrecacheResource( "model_folder", "models/items/drow", context )
+
 =====================================Main Functions================================================
 CosmeticLib:ReplaceWithSlotName( unit, slot_name, new_item_id )
 - Replace item for unit to the slot_name specified 
@@ -21,6 +29,19 @@ CosmeticLib:ReplaceDefault( unit, hero_name )
 - 
 - @param unit			: Entity that will replace cosmetic
 - @param hero_name		: Name of the hero retrievable by hero:GetName()
+
+CosmeticLib:RemoveFromSlot( unit, slot_name )
+- Remove item from specified slot_name in unit
+- Example: CosmeticLib:RemoveFromSlot( drow_ranger, "weapon" )
+-
+- @param unit			: Entity that will replace cosmetic
+- @param slot_name		: Slot name
+
+CosmeticLib:RemoveAll( unit )
+- Remove all items from unit
+- Example: CosmeticLib:RemoveAll( drow_ranger )
+-
+- @param unit			: Entity that will replace cosmetic
 
 CosmeticLib:EquipHeroSet( hero, set_id )
 - Equip the whole set of cosmetics to hero based on set_id, note that this will replace in respect to hero:GetName()
@@ -129,6 +150,19 @@ replace_item_by_id player_id old_item_id new_item_id
 - @param player_id		: Player ID between 0 to 9
 - @param old_item_id	: Item id for the old item that is current equipped to hero
 - @param new_item_id	: Item id for the new item to replace
+
+replace_default player_id
+- Replace default item for assigned hero from player_id
+- @param player_id	: Player ID between 0 to 9
+
+remove_from_slot player_id slot_name
+- Remove item in slot_name for assigned hero from player_id
+- @param player_id		: Player ID between 0 to 9
+- @param slot_name	: Slot name, retrievable via print_items_from_player
+
+remove_all player_id
+- Remove all items for assigned hero from player_id
+- @param player_id		: Player ID between 0 to 9
 
 ====================================Print to Console===============================================
 CosmeticLib:PrintPlayers()

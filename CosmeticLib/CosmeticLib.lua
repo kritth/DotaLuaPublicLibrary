@@ -35,39 +35,49 @@ function CosmeticLib:Init()
 		-- Custom console command
 		Convars:RegisterCommand( "print_available_players", function( cmd )
 				return CosmeticLib:PrintPlayers()
-			end, "Print all available players", 0
+			end, "Print all available players", FCVAR_CHEAT
 		)
 		Convars:RegisterCommand( "print_item_sets_for_player", function( cmd, player_id ) 
 				return CosmeticLib:PrintSetsForHero( PlayerResource:GetPlayer( tonumber( player_id ) ) )
-			end, "Print set item for hero", 0
+			end, "Print set item for hero", FCVAR_CHEAT
 		)
 		Convars:RegisterCommand( "print_items_from_player", function( cmd, player_id )
 				return CosmeticLib:PrintItemsFromPlayer( PlayerResource:GetPlayer( tonumber( player_id ) ) )
-			end, "Print items currently equipped to assigned hero", 0
+			end, "Print items currently equipped to assigned hero", FCVAR_CHEAT
 		)
 		Convars:RegisterCommand( "print_items_for_slot_from_player", function( cmd, player_id, slot_name )
 				return CosmeticLib:PrintItemsForSlotFromPlayer( PlayerResource:GetPlayer( tonumber( player_id ) ), slot_name )
-			end, "Print items available for certain slot in hero", 0
+			end, "Print items available for certain slot in hero", FCVAR_CHEAT
 		)
 		Convars:RegisterCommand( "equip_item_set_for_player", function( cmd, player_id, set_id ) 
 				local hero = PlayerResource:GetPlayer( tonumber( player_id ) ):GetAssignedHero()
 				return CosmeticLib:EquipHeroSet( hero, set_id )
-			end, "Equip set item for hero", 0
+			end, "Equip set item for hero", FCVAR_CHEAT
 		)
 		Convars:RegisterCommand( "replace_item_by_slot", function( cmd, player_id, slot_name, item_id )
 				local hero = PlayerResource:GetPlayer( tonumber( player_id ) ):GetAssignedHero()
 				return CosmeticLib:ReplaceWithSlotName( hero, slot_name, item_id )
-			end, "Replace item by slot name", 0
+			end, "Replace item by slot name", FCVAR_CHEAT
 		)
 		Convars:RegisterCommand( "replace_item_by_id", function( cmd, player_id, old_item_id, new_item_id )
 				local hero = PlayerResource:GetPlayer( tonumber( player_id ) ):GetAssignedHero()
 				return CosmeticLib:ReplaceWithItemID( hero, old_item_id, new_item_id )
-			end, "Replace item by id", 0
+			end, "Replace item by id", FCVAR_CHEAT
 		)
 		Convars:RegisterCommand( "replace_default", function( cmd, player_id )
 				local hero = PlayerResource:GetPlayer( tonumber( player_id ) ):GetAssignedHero()
 				return CosmeticLib:ReplaceDefault( hero, hero:GetName() )
-			end, "Replace items with default items", 0
+			end, "Replace items with default items", FCVAR_CHEAT
+		)
+		Convars:RegisterCommand( "remove_from_slot", function( cmd, player_id, slot_name )
+				local hero = PlayerResource:GetPlayer( tonumber( player_id ) ):GetAssignedHero()
+				return CosmeticLib:RemoveFromSlot( hero, slot_name )
+			end, "Remove cosmetic in certain slot", FCVAR_CHEAT
+		)
+		Convars:RegisterCommand( "remove_all", function( cmd, player_id )
+				local hero = PlayerResource:GetPlayer( tonumber( player_id ) ):GetAssignedHero()
+				return CosmeticLib:RemoveAll( hero )
+			end, "Remove all cosmetics from hero", FCVAR_CHEAT
 		)
 	end
 end
@@ -459,7 +469,7 @@ end
 
 -- Replace any unit back to default based on hero_name
 function CosmeticLib:ReplaceDefault( unit, hero_name )
-	if unit ~= nil and hero_name ~= nil then
+	if unit ~= nil and hero_name ~= nil and CosmeticLib:_Identify( unit ) == true then
 		if CosmeticLib._DefaultForHero[ hero_name ] ~= nil then
 			local hero_items = CosmeticLib._DefaultForHero[ hero_name ]
 			for slot_name, item_table in pairs( hero_items ) do
@@ -472,6 +482,45 @@ function CosmeticLib:ReplaceDefault( unit, hero_name )
 	end
 	
 	print( "[CosmeticLib:Replace] Error: Invalid input." )
+end
+
+-- Remove from slot
+function CosmeticLib:RemoveFromSlot( unit, slot_name )
+	if unit ~= nil and slot_name ~= nil and CosmeticLib:_Identify( unit ) == true then
+		-- Check if invisiblebox is in id
+		if CosmeticLib._AllItemsByID[ "-1" ] == nil then
+			CosmeticLib._AllItemsByID[ "-1" ] = {}
+			CosmeticLib._AllItemsByID[ "-1" ][ "model_player" ] = "models/development/invisiblebox.vmdl"
+		end
+		
+		if unit._cosmeticlib_wearables_slots[ slot_name ] ~= nil then
+			CosmeticLib:_Replace( unit._cosmeticlib_wearables_slots[ slot_name ], "-1" )
+		end
+		
+		return
+	end
+	
+	print( "[CosmeticLib:Remove] Error: Invalid input." )
+end
+
+-- Remove all
+function CosmeticLib:RemoveAll( unit )
+	if unit ~= nil and CosmeticLib:_Identify( unit ) == true then
+		-- Check if invisiblebox is in id
+		if CosmeticLib._AllItemsByID[ "-1" ] == nil then
+			CosmeticLib._AllItemsByID[ "-1" ] = {}
+			CosmeticLib._AllItemsByID[ "-1" ][ "model_player" ] = "models/development/invisiblebox.vmdl"
+		end
+		
+		-- Start force replacing
+		for slot_name, handle_table in pairs( unit._cosmeticlib_wearables_slots ) do
+			CosmeticLib:_Replace( handle_table, "-1" )
+		end
+		
+		return
+	end
+	
+	print( "[CosmeticLib:Remove] Error: Invalid input." )
 end
 
 -- Replace with check respect to slot name
@@ -500,6 +549,7 @@ function CosmeticLib:ReplaceWithItemID( unit, old_item_id, new_item_id )
 end
 
 -- Replace cosmetic
+-- This should never be called alone
 function CosmeticLib:_Replace( handle_table, new_item_id )
 	local item = CosmeticLib._AllItemsByID[ "" .. new_item_id ]
 	handle_table[ "handle" ]:SetModel( item[ "model_player" ] )
